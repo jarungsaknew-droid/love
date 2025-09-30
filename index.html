@@ -1,289 +1,153 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Special Gift for You</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        /* =================================
-           1. SETUP & VARIABLES 
-           ================================= */
-        :root {
-            /* Theme Colors */
-            --bg-color: #fcefee;
-            --primary-color: #e94d6e;
-            --secondary-color: #f7a7b8;
-            --lid-color: #f28b9f;
-            --ribbon-color: #ffffff;
-            --text-color: #a32843;
+  <meta charset="UTF-8">
+  <title>คิดถึงนะครับ 💖</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #f9a8d4, #a78bfa, #7dd3fc);
+      font-family: "Prompt", sans-serif;
+      overflow: hidden;
+    }
 
-            /* Sizing */
-            --gift-size: 200px; /* ขนาดเริ่มต้นบน Desktop */
-            --gift-size-mobile: 150px; /* ขนาดบน Mobile */
-        }
+    /* พื้นหลังดวงดาว */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(white, transparent) repeat;
+      background-size: 3px 3px;
+      animation: twinkle 3s infinite;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-        /* =================================
-           2. GENERAL STYLING
-           ================================= */
-        body {
-            font-family: 'Kanit', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, var(--bg-color) 0%, #fff1f4 100%);
-            overflow: hidden;
-            color: var(--text-color);
-        }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 0.4; }
+    }
 
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-        
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 2rem; /* <-- ปรับค่าตรงนี้ตามคำขอแล้ว */
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
-        }
+    /* กล่อง scratch card */
+    .scratch-container {
+      position: relative;
+      width: 360px;
+      height: 220px;
+      z-index: 1;
+    }
 
-        /* =================================
-           3. GIFT BOX STYLING
-           ================================= */
-        .gift-box {
-            position: relative;
-            width: var(--gift-size);
-            height: var(--gift-size);
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .gift-box:hover {
-            transform: scale(1.05) rotate(2deg);
-        }
+    .hidden-message {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      font-weight: bold;
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      text-shadow: 0 0 20px #ff80b5, 0 0 35px #ffd6e0;
+    }
 
-        .box-body {
-            width: 100%;
-            height: 100%;
-            background-color: var(--primary-color);
-            position: absolute;
-            bottom: 0;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-        }
-
-        .ribbon {
-            position: absolute;
-            background-color: var(--ribbon-color);
-            opacity: 0.8;
-        }
-        
-        .ribbon.vertical {
-            width: 30px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .ribbon.horizontal {
-            width: 100%;
-            height: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        
-        .lid {
-            width: calc(var(--gift-size) + 20px);
-            height: 60px;
-            background-color: var(--lid-color);
-            position: absolute;
-            top: -30px;
-            left: -10px;
-            border-radius: 8px;
-            transform-origin: center top;
-            transition: transform 0.6s cubic-bezier(0.17, 0.84, 0.44, 1.5), opacity 0.4s ease-out;
-            z-index: 2;
-        }
-
-        /* =================================
-           4. OPEN STATE & MESSAGE
-           ================================= */
-        .gift-box.open .lid {
-            transform: translateY(-200px) rotate(25deg) scale(0.8);
-            opacity: 0;
-        }
-
-        .message {
-            background-color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-size: 1.5rem;
-            font-weight: 500;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            transform: translateY(50px) scale(0.8);
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1) 0.3s; /* Delay for message appearance */
-            position: absolute;
-            bottom: 120%;
-            white-space: nowrap;
-        }
-        
-        .gift-box.open ~ .message {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* =================================
-           5. PARTICLES & BUTTON
-           ================================= */
-        .particle {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
-            animation: explode 1s ease-out forwards;
-        }
-
-        @keyframes explode {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: var(--transform-end);
-            }
-        }
-        
-        #resetButton {
-            margin-top: 2rem;
-            padding: 0.8rem 1.5rem;
-            font-family: 'Kanit', sans-serif;
-            font-size: 1rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease 0.8s, transform 0.5s ease 0.8s;
-            pointer-events: none;
-        }
-        
-        #resetButton.visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        /* =================================
-           6. RESPONSIVENESS
-           ================================= */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.5rem; }
-            .message { font-size: 1.2rem; }
-            .gift-box {
-                width: var(--gift-size-mobile);
-                height: var(--gift-size-mobile);
-            }
-            .lid {
-                width: calc(var(--gift-size-mobile) + 20px);
-            }
-        }
-    </style>
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 20px;
+      cursor: grab;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+  </style>
 </head>
 <body>
+  <div class="stars"></div>
 
-<div class="main-container">
-    <h1>มีอะไรจะให้...</h1>
-    <div class="gift-box" id="giftBox" role="button" tabindex="0" aria-label="เปิดกล่องของขวัญ">
-        <div class="lid"></div>
-        <div class="box-body">
-            <div class="ribbon vertical"></div>
-            <div class="ribbon horizontal"></div>
-        </div>
-    </div>
-    <div class="message" id="message">เราชอบเธอนะ ❤️</div>
-</div>
+  <div class="scratch-container">
+    <div class="hidden-message">คิดถึงนะครับ 💖</div>
+    <canvas id="scratch"></canvas>
+  </div>
 
-<button id="resetButton">ลองอีกครั้ง</button>
+  <!-- ดนตรีเบา ๆ -->
+  <audio id="bgm" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3becc9f62f.mp3?filename=romantic-piano-ambient-112199.mp3" type="audio/mpeg">
+  </audio>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // === DOM Elements ===
-    const giftBox = document.getElementById('giftBox');
-    const resetButton = document.getElementById('resetButton');
+  <script>
+    const canvas = document.getElementById("scratch");
+    const ctx = canvas.getContext("2d");
+    const container = document.querySelector(".scratch-container");
+    const hiddenMessage = document.querySelector(".hidden-message");
 
-    // === State ===
-    let isAnimating = false;
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
 
-    // === Functions ===
-    const openGift = () => {
-        if (isAnimating) return;
-        isAnimating = true;
-        
-        giftBox.classList.add('open');
-        createParticles(100);
-        
-        setTimeout(() => {
-            resetButton.classList.add('visible');
-        }, 1000); // Show button after animation
-    };
-    
-    const resetAnimation = () => {
-        giftBox.classList.remove('open');
-        resetButton.classList.remove('visible');
-        isAnimating = false;
-    };
+    // วาดชั้นปกปิดแบบ gradient สดใส
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, "#f472b6");
+    gradient.addColorStop(1, "#c084fc");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const createParticles = (count) => {
-        const particleContainer = document.body;
-        const colors = ['#e94d6e', '#f7a7b8', '#ffffff', '#f28b9f'];
-        const rect = giftBox.getBoundingClientRect();
-        const startX = rect.left + rect.width / 2;
-        const startY = rect.top + rect.height / 2;
+    let isDrawing = false;
 
-        for (let i = 0; i < count; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            particle.style.left = `${startX}px`;
-            particle.style.top = `${startY}px`;
-            
-            const size = Math.random() * 12 + 4; // Size 4px to 16px
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            const angle = Math.random() * 360;
-            const distance = Math.random() * 150 + 100; // Radius of explosion
-            const endX = Math.cos(angle * (Math.PI / 180)) * distance;
-            const endY = Math.sin(angle * (Math.PI / 180)) * distance;
+    function startDraw(e) {
+      isDrawing = true;
+      scratch(e);
+    }
 
-            particle.style.setProperty('--transform-end', `translate(${endX}px, ${endY}px) scale(0)`);
-            
-            particle.addEventListener('animationend', () => particle.remove());
-            particleContainer.appendChild(particle);
-        }
-    };
-    
-    // === Event Listeners ===
-    giftBox.addEventListener('click', openGift);
-    giftBox.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') openGift();
-    });
-    resetButton.addEventListener('click', resetAnimation);
-});
-</script>
+    function endDraw() {
+      isDrawing = false;
+      ctx.beginPath();
+      checkReveal();
+    }
 
+    function scratch(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || e.touches[0].clientX) - rect.left;
+      const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.beginPath();
+      ctx.arc(x, y, 25, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // ตรวจสอบเปอร์เซ็นต์ที่ถูกขัดออก
+    function checkReveal() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let cleared = 0;
+      for (let i = 3; i < imageData.data.length; i += 4) {
+        if (imageData.data[i] === 0) cleared++;
+      }
+      const percent = cleared / (canvas.width * canvas.height) * 100;
+      if (percent > 60) {
+        canvas.style.transition = "opacity 1s ease";
+        canvas.style.opacity = 0;
+        setTimeout(() => canvas.remove(), 1000);
+      }
+    }
+
+    // Event listeners
+    canvas.addEventListener("mousedown", startDraw);
+    canvas.addEventListener("mouseup", endDraw);
+    canvas.addEventListener("mousemove", scratch);
+
+    canvas.addEventListener("touchstart", startDraw);
+    canvas.addEventListener("touchend", endDraw);
+    canvas.addEventListener("touchmove", scratch);
+
+    // ปรับเสียงเบา ๆ
+    const bgm = document.getElementById("bgm");
+    bgm.volume = 0.3;
+  </script>
 </body>
 </html>
